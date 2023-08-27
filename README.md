@@ -1,7 +1,37 @@
-"StarkNet" - это концепция и технология, разрабатываемая компанией StarkWare. Она связана с областью блокчейн и криптовалют, и целью этой технологии является улучшение масштабируемости и эффективности децентрализованных приложений (DApps) на блокчейне.
+import hashlib
+import time
 
-Суть StarkNet заключается в создании дополнительного уровня (часто называемого "L2" или "вторым уровнем") поверх блокчейна, который позволяет выполнять сложные вычисления вне главного блокчейна. Это снижает нагрузку на главный блокчейн и улучшает его пропускную способность и масштабируемость. Таким образом, StarkNet стремится решить проблемы, связанные с высокими комиссиями и медленными транзакциями на некоторых блокчейнах.
+class Block:
+    def __init__(self, index, previous_hash, timestamp, data, hash):
+        self.index = index
+        self.previous_hash = previous_hash
+        self.timestamp = timestamp
+        self.data = data
+        self.hash = hash
 
-Структура StarkNet позволяет создавать и развертывать децентрализованные приложения с более сложной логикой, такие как финансовые инструменты, игры и другие вычислительно интенсивные сценарии. Это достигается с использованием протокола доказательства выполнения (Proof of Execution), который позволяет доказывать корректность выполнения вычислений без необходимости непосредственной проверки каждой операции на главном блокчейне.
+def calculate_hash(index, previous_hash, timestamp, data):
+    value = str(index) + str(previous_hash) + str(timestamp) + str(data)
+    return hashlib.sha256(value.encode('utf-8')).hexdigest()
 
-Важно отметить, что информация, которую я могу предоставить, ограничена моими данными до сентября 2021 года. Если StarkNet развивается дальше, рекомендуется обратиться к официальным источникам или сообществу StarkWare для более актуальной информации о проекте.
+def create_genesis_block():
+    return Block(0, "0", int(time.time()), "Genesis Block", calculate_hash(0, "0", int(time.time()), "Genesis Block"))
+
+def create_new_block(previous_block, data):
+    index = previous_block.index + 1
+    timestamp = int(time.time())
+    hash = calculate_hash(index, previous_block.hash, timestamp, data)
+    return Block(index, previous_block.hash, timestamp, data, hash)
+
+# Создание блокчейна
+blockchain = [create_genesis_block()]
+previous_block = blockchain[0]
+
+# Добавление новых блоков
+num_blocks_to_add = 10
+for _ in range(num_blocks_to_add):
+    new_data = f"This is block {_ + 1}"
+    new_block = create_new_block(previous_block, new_data)
+    blockchain.append(new_block)
+    previous_block = new_block
+    print(f"Block #{new_block.index} has been added to the blockchain!")
+    print(f"Hash: {new_block.hash}\n")
