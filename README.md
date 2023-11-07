@@ -25,6 +25,10 @@ def create_new_block(previous_block, data):
 # Создание блокчейна
 blockchain = [create_genesis_block()]
 previous_block = blockchain[0]
+# Создание блокчейна
+blockchain = [create_genesis_block()]
+previous_block = blockchain[0]
+
 
 # Добавление новых блоков
 num_blocks_to_add = 10
